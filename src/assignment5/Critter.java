@@ -37,15 +37,62 @@ public abstract class Critter {
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();//List of all living Critters
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();		//List of baby Critters yet to be added to pop
 	private static Map<Integer, Map<Integer, Tile>> world; 				//2D map (Since we have 2 keys: x,y) holding the tile objects
-	private static boolean firstTime = true;					//lets program know to call createWorld()
+    private static Map<Integer, Map<Integer, Tile>> lastTurnWorld; 		//copy of world as it was before this worldTimeStep started
+    private static boolean firstTime = true;					//lets program know to call createWorld()
 	private boolean hasMoved;									//says if Critter has moved thus far this turn
 	private static HashSet<String> critterTypes = new HashSet<String>() {{add("assignment4.Craig"); add("assignment4.Algae");
 		add("assignment4.Critter1"); add("assignment4.Critter2"); add("assignment4.Critter3");add("assignment4.Critter4");}};	//holds critterTypes
 	static {				// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
 		myPackage = Critter.class.getPackage().toString().split(" ")[1];
 	}
-	
-	protected final String look(int direction, boolean steps) {return "";}
+
+    /**
+     * Function that lets a Critter look 1 or 2 steps in any direction
+     * @param direction int from 0-7 representing the direction the Critter wants to look
+     * @param steps boolean representing if the Critter wants to look 1 or 2 steps (2 if true, 1 if false)
+     * @return String representing Critter on the tile we are looking at, or null if nothing is there
+     */
+    protected final String look(int direction, boolean steps) {
+        int[] Location = findCritter(this, lastTurnWorld).getPosition();		//get Critter location before this turn started
+        int distance = (steps) ? 2 : 1;
+        switch (direction) {                        //add/subtract distance to coordinates, dependent on direction
+            case 0:
+                Location[0] += distance;
+                break;
+            case 1:
+                Location[0] += distance;
+                Location[1] -= distance;
+                break;
+            case 2:
+                Location[1] -= distance;
+                break;
+            case 3:
+                Location[1] -= distance;
+                Location[0] -= distance;
+                break;
+            case 4:
+                Location[0] -= distance;
+                break;
+            case 5:
+                Location[0] -= distance;
+                Location[1] += distance;
+                break;
+            case 6:
+                Location[1] += distance;
+                break;
+            case 7:
+                Location[1] += distance;
+                Location[0] += distance;
+                break;
+        }
+        this.energy -= Params.look_energy_cost;
+        ArrayList<Critter> lookList = lastTurnWorld.get(Location[1]).get(Location[0]).crittersOnTile(); //get the list of Critters on Tile according to lastTurnWorld
+        if (lookList.size()>0){
+            if (lookList.size()==1) return lookList.get(0).toString();
+            return ("UH IDK WHATS SUPPOSED TO HAPPEN HERE?");		//FIX THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+        }
+        return null;
+    }
 	
 	/* rest is unchanged from Project 4 */
 
@@ -110,7 +157,7 @@ public abstract class Critter {
 		}
 		else {										//else Critter dies
 			this.energy = 0;
-			this.death();
+			//this.death();
 		}
 	}
 
@@ -183,6 +230,24 @@ public abstract class Critter {
 		(world.get(this.y_coord).get(this.x_coord)).remove(this);		//removes from Tile list
 	}
 
+    /**
+     * Function to find the tile a critter was on according to a world map
+     * @param c Critter to be found
+     * @param w Map of the world we are searching through
+     * @return Tile c is on
+     */
+    private Tile findCritter(Critter c, Map<Integer, Map<Integer, Tile>> w){
+        for(int i=0; i<Params.world_height; i++){
+            for (int j=0; j<Params.world_width; j++){
+                for (int k=0; k<w.get(i).get(j).crittersOnTile().size(); k++){
+                    if (c==w.get(i).get(j).crittersOnTile().get(k)) return w.get(i).get(j);
+                }
+            }
+        }
+        return null;
+    }
+
+
 	/**
 	 * Determine the result of an encounter between 2 Critters
 	 * @param A Critter encountering B
@@ -191,12 +256,12 @@ public abstract class Critter {
 	private static void encounter(Critter A, Critter B){
 		if(A.toString() == "@") {			//if one is algae...
 			B.energy += A.energy/2;			//the other automatically wins and gets half of the loser's energy
-			A.death();						//the loser is removed
+			//A.death();						//the loser is removed
 			return;
 		}
 		if(B.toString() == "@") {
 			A.energy += B.energy/2;
-			B.death();
+			//B.death();
 			return;
 		}
 
@@ -224,21 +289,21 @@ public abstract class Critter {
 			int bAttack = getRandomInt(B.energy+1);
 			if (aAttack > bAttack){						//The one with the higher attack gains half the other's energy and lives
 				A.energy += (B.energy)/2;
-				B.death();
+				//B.death();
 			}
 			else if (bAttack > aAttack){
 				B.energy += (A.energy)/2;
-				A.death();
+				//A.death();
 			}
 			else {
 				int winner = getRandomInt(2);		//If they have the same attack value, randomly decide winner
 				if (winner == 0) {
 					A.energy += (B.energy)/2;
-					B.death();
+					//B.death();
 				}
 				else {
 					B.energy += (A.energy)/2;
-					A.death();
+					//A.death();
 				}
 			}
 		}
@@ -268,7 +333,8 @@ public abstract class Critter {
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
 		if (firstTime) {												//if this is the first worldTimeStep create world
-			createWorld();
+			createWorld(world);
+			createWorld(lastTurnWorld);
 			firstTime = false;
 		}
 
@@ -295,20 +361,20 @@ public abstract class Critter {
 
 	}
 
-	/**
-	 * Fills the world Map with Tiles
-	 */
-	private static void createWorld(){
-		world = new HashMap<Integer, Map<Integer, Tile>>(); 		//Map holding the Maps of each row
-		for (int i=0; i<Params.world_height; i++){  				//i represents the y coordinate
-			Map<Integer, Tile> row = new HashMap<Integer, Tile>();  			//Map of all of the tiles with y coordinate i
-			for (int j=0; j<Params.world_width; j++){ 				//j represents the x coordinate
-				Tile newTile = new Tile(j,i);						//Create a new Tile with location (j,i)
-				row.put(j, newTile);								//add it to Map of tiles with y coordinate i
-			}
-			world.put(i, row);										//add Map of tiles with y coordinate i to Map of all rows
-		}
-	}
+    /**
+     * Fills the world Map with Tiles
+     */
+    private static void createWorld( Map worldName){
+        worldName = new HashMap<Integer, Map<Integer, Tile>>(); 		//Map holding the Maps of each row
+        for (int i=0; i<Params.world_height; i++){  				//i represents the y coordinate
+            Map<Integer, Tile> row = new HashMap<Integer, Tile>();  			//Map of all of the tiles with y coordinate i
+            for (int j=0; j<Params.world_width; j++){ 				//j represents the x coordinate
+                Tile newTile = new Tile(j,i);						//Create a new Tile with location (j,i)
+                row.put(j, newTile);								//add it to Map of tiles with y coordinate i
+            }
+            worldName.put(i, row);										//add Map of tiles with y coordinate i to Map of all rows
+        }
+    }
 
 	/**
 	 * Gets a list of critters of a specific type.
@@ -450,20 +516,42 @@ public abstract class Critter {
 		}
 	}
 
+    /**
+     * Function which updates the Map holding the copy of the world before this turn started
+     */
+    private static void updateOldWorld(){
+        for (int i=0; i<Params.world_height; i++){  				//updates lastTurnWorld to be the same as world
+            for (int j=0; j<Params.world_width; j++) {
+                lastTurnWorld.get(i).get(j).clearTile();
+                for (int k = 0; k < world.get(i).get(j).crittersOnTile().size(); k++) {
+                    lastTurnWorld.get(i).get(j).setFilled(world.get(i).get(j).crittersOnTile().get(k));
+                }
+            }
+        }
+    }
+
 	/**
 	 * Calls doTimeStep for each critter in the world, then resolves Tiles with more than one critter
 	 * @throws InvalidCritterException
 	 */
 	public static void worldTimeStep() throws InvalidCritterException {
 		if (firstTime) {												//if this is the first worldTimeStep create world
-			createWorld();
+			createWorld(world);
+			createWorld(lastTurnWorld);
 		}
+		updateOldWorld();                                               //update before any time steps are called
 		for (int i=0; i<population.size(); i++){
 			population.get(i).hasMoved = false;							//reset hasMoved
 			population.get(i).doTimeStep();								//call each Critter's doTimeStep
 		}
+        for(int i = 0; i < population.size(); i++) {                    //remove dead critters before fight as specified
+            if(population.get(i).energy <= 0) {							//if energy falls below zero kill critter
+                population.get(i).death();
+                i--;
+            }
+        }
 
-
+        updateOldWorld();                                              //update before 'fight' is called
 		for (int i=0; i<Params.world_height; i++){						//find any Tile with more than one critter, and have them fight
 			for(int j=0; j<Params.world_width; j++){
 				ArrayList<Critter> crits = world.get(i).get(j).crittersOnTile();
