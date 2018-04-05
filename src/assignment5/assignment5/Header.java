@@ -1,3 +1,4 @@
+package assignment5;
 /* CRITTERS GUI <MyClass.java>
  * EE422C Project 5 submission by
  * Replace <...> with your actual data.

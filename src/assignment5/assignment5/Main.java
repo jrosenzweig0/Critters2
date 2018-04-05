@@ -1,5 +1,6 @@
 package assignment5;
 
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -78,7 +79,7 @@ public class Main extends Application {
             rSide.add(setSeed,1,6);
 
 
-
+            //Make
 			Button makeButton = new Button("MAKE");
 			Slider makeN = new Slider();
 			makeN.setMin(0);
@@ -105,7 +106,10 @@ public class Main extends Application {
                 }
                 paintGridLines(world);
             });
+            
+            
 
+            //Step
 			GridPane stepGrid = new GridPane();
 			Button step1 = new Button("1");
 			Button step100 = new Button("100");
@@ -117,6 +121,8 @@ public class Main extends Application {
 			stepGrid.add(step100,1,0);
 			stepGrid.add(step1000,2,0);
 			stepGrid.setHgap(20);
+			
+			//Step 1
             step1.setOnAction(event -> {
                 try{
                     Critter.worldTimeStep();
@@ -124,6 +130,32 @@ public class Main extends Application {
                 catch (InvalidCritterException e){
                     System.out.println("NAH");
                 }
+                paintGridLines(world);
+            });
+            
+            //Step 100
+            step100.setOnAction(event -> {
+                for(int i = 0; i<100; i++) {
+	            	try{
+	                    Critter.worldTimeStep();
+	                }
+	                catch (InvalidCritterException e){
+	                    System.out.println("NAH");
+	                }
+                }
+                paintGridLines(world);
+            });
+            
+            //Step 1000
+            step1000.setOnAction(event -> {
+            	for(int i = 0; i<1000; i++) {
+	                try{
+	                    Critter.worldTimeStep();
+	                }
+	                catch (InvalidCritterException e){
+	                    System.out.println("NAH");
+	                }
+            	}
                 paintGridLines(world);
             });
 
