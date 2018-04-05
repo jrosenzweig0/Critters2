@@ -1,9 +1,15 @@
 package assignment5;
 
 
+import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,7 +20,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 
@@ -51,22 +60,14 @@ public class Main extends Application {
 
 			GridPane animationStuff = new GridPane();
 			Button animateB = new Button("Animate");
-            animateB.setOnAction(event -> {
-            	animateFlag = !animateFlag;
-                while (animateFlag) {
-	            	try{
-	                    Critter.worldTimeStep();
-	                    TimeUnit.MILLISECONDS.sleep(1000);
-	                }
-	                catch (Exception e){
-	                    System.out.println(e);
-	                }
-	                paintGridLines(world);
-                }
-            });
+			Button stopAnimate = new Button("Stop");
+			stopAnimate.setDisable(true);
+            stopAnimate.setOnAction(event -> {animateFlag = false;});
+            bottom.add(stopAnimate, 2, 0);
+            
 			Slider animateS = new Slider();
 			animateS.setMin(1);
-			animateS.setMax(5);
+			animateS.setMax(10);
 			animateS.setValue(1);
 			animateS.setShowTickLabels(false);
 			animateS.setShowTickMarks(false);
@@ -78,6 +79,50 @@ public class Main extends Application {
 			animationStuff.setHgap(20);
 			bottom.add(animationStuff,0,0);
 			s.add(bottom,0,1);
+			
+			
+			Timeline timeline = new Timeline();
+			animateB.setOnAction(new EventHandler<ActionEvent>() {
+				
+				@Override
+				public void handle(ActionEvent event) {
+					animateFlag = !animateFlag;
+					if(!animateFlag){
+						return;
+					}
+
+					stopAnimate.setDisable(false);
+					animateB.setDisable(true);
+
+					
+					timeline.getKeyFrames().add(new KeyFrame(Duration.millis((int) 1000/animateS.getValue()), 
+							new EventHandler<ActionEvent>() {
+						
+						@Override
+						public void handle(ActionEvent event){
+							if(!animateFlag){
+								stopAnimate.setDisable(true);
+								animateB.setDisable(false);
+								return;
+							}
+							try {
+								Critter.worldTimeStep();
+							} catch (InvalidCritterException e) {
+								e.printStackTrace();
+							}
+							paintGridLines(world);
+						}
+						
+					}));    
+					timeline.setCycleCount(Timeline.INDEFINITE);
+					timeline.play();
+					
+					
+				}
+			});
+
+            
+
 
 
 //			//runStats
@@ -202,12 +247,17 @@ public class Main extends Application {
 	 * icons, and as place-holders for empty cells.  Without placeholders, grid may not display properly.
 	 */
 	private static void paintGridLines(GridPane grid) {
+
 		int size = 600/Params.world_height;
+//		grid.getColumnConstraints().add(new ColumnConstraints(size));
+//		grid.getRowConstraints().add(new RowConstraints(size));
+		grid.getChildren().clear();
+		grid.setGridLinesVisible(true);
 		for (int r = 0; r < Params.world_height; r++)
 			for (int c = 0; c < Params.world_width; c++) {
 				Shape s = new Rectangle(size, size);
                 s.setFill(null);
-                s.setStroke(Color.GRAY);
+                s.setStroke(Color.WHITE);
                 if (!Critter.firstTime) {
                     List<Critter> cTile = Critter.world.get(r).get(c).crittersOnTile();
                     if (cTile.size() > 0) {
