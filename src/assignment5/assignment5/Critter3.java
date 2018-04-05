@@ -44,7 +44,7 @@ public class Critter3 extends Critter.TestCritter {
 	public void doTimeStep() {
 		hasmoved = false;
 		try {
-			algae = ((double) getInstances("assignment4.Algae").size())/((double)(Params.world_height*Params.world_width));
+			algae = ((double) getInstances("assignment5.Algae").size())/((double)(Params.world_height*Params.world_width));
 		} catch (InvalidCritterException e) {
 			algae = 1.0;
 		}

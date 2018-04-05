@@ -18,12 +18,15 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 
+import java.util.concurrent.TimeUnit;
+
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static javafx.application.Application.launch;
 
 public class Main extends Application {
-
+	public boolean animateFlag = false;
 	public static void main(String[] args) {
 		launch(args);
 
@@ -40,12 +43,27 @@ public class Main extends Application {
 			primaryStage.show();
 
 			paintGridLines(world);
+			
 
+			
 			GridPane rSide = new GridPane();
 			GridPane bottom = new GridPane();
 
 			GridPane animationStuff = new GridPane();
 			Button animateB = new Button("Animate");
+            animateB.setOnAction(event -> {
+            	animateFlag = !animateFlag;
+                while (animateFlag) {
+	            	try{
+	                    Critter.worldTimeStep();
+	                    TimeUnit.MILLISECONDS.sleep(1000);
+	                }
+	                catch (Exception e){
+	                    System.out.println(e);
+	                }
+	                paintGridLines(world);
+                }
+            });
 			Slider animateS = new Slider();
 			animateS.setMin(1);
 			animateS.setMax(5);

@@ -83,7 +83,7 @@ public class Critter1 extends Critter.TestCritter{
 	@Override
 	public void doTimeStep() {
 		try {                                                                //gets list of Critter1s
-				List<Critter> friends = getInstances("assignment4.Critter1");
+				List<Critter> friends = getInstances("assignment5.Critter1");
 				double bestDistance = getDist(friends.get(0));					//double representing distance to closest Critter1
 				int bestFriend = 0;												//index of closest Critter1 in friends
 				if ((friends.get(bestFriend) == this)&&(friends.size()>1)) {	//makes start Critter!=this
