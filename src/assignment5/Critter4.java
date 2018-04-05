@@ -1,5 +1,7 @@
 package assignment5;
 
+import javafx.scene.paint.Color;
+
 /**
  * This critter has a 5% chance of reproducing an impotent critter (A critter that does not reproduce)
  * this critter runs if is high on energy and walks if it is low on energy
@@ -29,10 +31,10 @@ public class Critter4 extends Critter.TestCritter {
 	}
 
 	public javafx.scene.paint.Color viewOutlineColor() { return viewColor(); }
-	public javafx.scene.paint.Color viewFillColor() { return viewColor(); }
+	public javafx.scene.paint.Color viewFillColor() { return Color.MAROON;  }
 
 	public CritterShape viewShape(){
-		return CritterShape.CIRCLE;
+		return CritterShape.SQUARE;
 	}
 	  
 	@Override

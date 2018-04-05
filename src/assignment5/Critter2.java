@@ -20,10 +20,10 @@ import java.util.List;
 public class Critter2 extends Critter.TestCritter {
 
 	public javafx.scene.paint.Color viewOutlineColor() { return viewColor(); }
-	public javafx.scene.paint.Color viewFillColor() { return viewColor(); }
+	public javafx.scene.paint.Color viewFillColor() { return javafx.scene.paint.Color.CRIMSON;  }
 
 	public CritterShape viewShape(){
-		return CritterShape.CIRCLE;
+		return CritterShape.SQUARE;
 	}
 
 	/**

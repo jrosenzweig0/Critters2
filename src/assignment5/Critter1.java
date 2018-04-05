@@ -24,8 +24,7 @@ public class Critter1 extends Critter.TestCritter{
 
 
 	public javafx.scene.paint.Color viewOutlineColor() { return viewColor(); }
-	public javafx.scene.paint.Color viewFillColor() { return viewColor(); }
-
+	public javafx.scene.paint.Color viewFillColor() { return javafx.scene.paint.Color.NAVY;  }
 	public CritterShape viewShape(){
 		return CritterShape.CIRCLE;
 	}

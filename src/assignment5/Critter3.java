@@ -1,5 +1,7 @@
 package assignment5;
 
+import javafx.scene.paint.Color;
+
 /**
  * Critter3 chooses a direction and moves in that direction every turn. When the constructor is called there is a
  * 50% chance that the critter gets a reproduce energy of 50 and a 50% chance that it gets a reproduce energy of 200. 
@@ -28,7 +30,7 @@ public class Critter3 extends Critter.TestCritter {
 	}
 
 	public javafx.scene.paint.Color viewOutlineColor() { return viewColor(); }
-	public javafx.scene.paint.Color viewFillColor() { return viewColor(); }
+	public javafx.scene.paint.Color viewFillColor() { return Color.DARKSALMON; }
 
 	public CritterShape viewShape(){
 		return CritterShape.CIRCLE;

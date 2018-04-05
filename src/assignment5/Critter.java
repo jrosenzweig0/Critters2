@@ -36,12 +36,13 @@ public abstract class Critter {
 	private static String myPackage;
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();//List of all living Critters
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();		//List of baby Critters yet to be added to pop
-	private static Map<Integer, Map<Integer, Tile>> world; 				//2D map (Since we have 2 keys: x,y) holding the tile objects
-    private static Map<Integer, Map<Integer, Tile>> lastTurnWorld; 		//copy of world as it was before this worldTimeStep started
-    private static boolean firstTime = true;					//lets program know to call createWorld()
+	public static Map<Integer, Map<Integer, Tile>> world = new HashMap<Integer, Map<Integer, Tile>>();  				//2D map (Since we have 2 keys: x,y) holding the tile objects
+    private static Map<Integer, Map<Integer, Tile>> lastTurnWorld = new HashMap<Integer, Map<Integer, Tile>>(); 		//copy of world as it was before this worldTimeStep started
+    public static boolean firstTime = true;					//lets program know to call createWorld()
 	private boolean hasMoved;									//says if Critter has moved thus far this turn
-	private static HashSet<String> critterTypes = new HashSet<String>() {{add("assignment4.Craig"); add("assignment4.Algae");
-		add("assignment4.Critter1"); add("assignment4.Critter2"); add("assignment4.Critter3");add("assignment4.Critter4");}};	//holds critterTypes
+	private static HashSet<String> critterTypes = new HashSet<String>() {{add("assignment5.Craig"); add("assignment5.Algae");
+		add("assignment5.Critter1"); add("assignment5.Critter2"); add("assignment5.Critter3");add("assignment5.Critter4");
+		add("assignment5.AlgaephobicCritter");add("assignment5.TragicCritter");}};	//holds critterTypes
 	static {				// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
 		myPackage = Critter.class.getPackage().toString().split(" ")[1];
 	}
@@ -157,7 +158,7 @@ public abstract class Critter {
 		}
 		else {										//else Critter dies
 			this.energy = 0;
-			//this.death();
+			this.death();
 		}
 	}
 
@@ -256,12 +257,12 @@ public abstract class Critter {
 	private static void encounter(Critter A, Critter B){
 		if(A.toString() == "@") {			//if one is algae...
 			B.energy += A.energy/2;			//the other automatically wins and gets half of the loser's energy
-			//A.death();						//the loser is removed
+			A.death();						//the loser is removed
 			return;
 		}
 		if(B.toString() == "@") {
 			A.energy += B.energy/2;
-			//B.death();
+			B.death();
 			return;
 		}
 
@@ -289,21 +290,21 @@ public abstract class Critter {
 			int bAttack = getRandomInt(B.energy+1);
 			if (aAttack > bAttack){						//The one with the higher attack gains half the other's energy and lives
 				A.energy += (B.energy)/2;
-				//B.death();
+				B.death();
 			}
 			else if (bAttack > aAttack){
 				B.energy += (A.energy)/2;
-				//A.death();
+				A.death();
 			}
 			else {
 				int winner = getRandomInt(2);		//If they have the same attack value, randomly decide winner
 				if (winner == 0) {
 					A.energy += (B.energy)/2;
-					//B.death();
+					B.death();
 				}
 				else {
 					B.energy += (A.energy)/2;
-					//A.death();
+					A.death();
 				}
 			}
 		}
@@ -364,8 +365,7 @@ public abstract class Critter {
     /**
      * Fills the world Map with Tiles
      */
-    private static void createWorld( Map worldName){
-        worldName = new HashMap<Integer, Map<Integer, Tile>>(); 		//Map holding the Maps of each row
+    private static void createWorld( Map<Integer, Map<Integer, Tile>>worldName){
         for (int i=0; i<Params.world_height; i++){  				//i represents the y coordinate
             Map<Integer, Tile> row = new HashMap<Integer, Tile>();  			//Map of all of the tiles with y coordinate i
             for (int j=0; j<Params.world_width; j++){ 				//j represents the x coordinate
@@ -573,7 +573,7 @@ public abstract class Critter {
 
 		for(int i = 0; i < Params.refresh_algae_count; i++) {			//add <refresh_algae_count> algae
 			try {
-				makeCritter("assignment4.Algae");
+				makeCritter("assignment5.Algae");
 			}
 			catch(InvalidCritterException e) {
 				System.out.print(e);

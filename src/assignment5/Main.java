@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -15,6 +16,8 @@ import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
+
+import java.util.List;
 
 import static javafx.application.Application.launch;
 
@@ -58,6 +61,24 @@ public class Main extends Application {
 			s.add(bottom,0,1);
 
 
+//			//runStats
+//            Button runStats = new Button("Stats");
+//            rightU.add(new Text(Critter.runStats(selection from combo box)));
+
+
+
+            //setSeed
+
+            TextField seed = new TextField();
+            Text seedText = new Text("Seed:");
+            seedText.setFont(Font.font ("Verdana", 20));
+            rSide.add(seedText,0,5);
+            rSide.add(seed, 0,6);
+            Button setSeed = new Button("Set");
+            rSide.add(setSeed,1,6);
+
+
+
 			Button makeButton = new Button("MAKE");
 			Slider makeN = new Slider();
 			makeN.setMin(0);
@@ -69,10 +90,21 @@ public class Main extends Application {
 			makeN.setMinorTickCount(10);
 			makeN.setBlockIncrement(5);
 			makeN.setPrefWidth(200);
-
-			ObservableList<String> Crits = FXCollections.observableArrayList("Critter1","Critter2","Critter3",
-					"Critter4", "Algae", "TragicCritter", "Craig", "AlgaephobicCritter");
-			final ComboBox CritSelect = new ComboBox(Crits);
+            ObservableList<String> Crits = FXCollections.observableArrayList("Critter1","Critter2","Critter3",
+                    "Critter4", "Algae", "TragicCritter", "Craig", "AlgaephobicCritter");
+            final ComboBox CritSelect = new ComboBox(Crits);
+            makeButton.setOnAction(event -> {
+                int numCrit = (int)makeN.getValue();
+                for (int i = 0; i < numCrit; i++) {
+                    try{
+                        Critter.makeCritter("assignment5." + CritSelect.getValue());
+                    }
+                    catch (InvalidCritterException e){
+                        System.out.println("NAH");
+                    }
+                }
+                paintGridLines(world);
+            });
 
 			GridPane stepGrid = new GridPane();
 			Button step1 = new Button("1");
@@ -80,13 +112,22 @@ public class Main extends Application {
 			Button step1000 = new Button("1000");
 			Text step = new Text("Step:");
 			step.setFont(Font.font ("Verdana", 20));
-			stepGrid.add(step, 0, 0);
-			stepGrid.add(step1,1,0);
-			stepGrid.add(step100,2,0);
-			stepGrid.add(step1000,3,0);
+			rSide.add(step, 0, 3);
+			stepGrid.add(step1,0,0);
+			stepGrid.add(step100,1,0);
+			stepGrid.add(step1000,2,0);
 			stepGrid.setHgap(20);
+            step1.setOnAction(event -> {
+                try{
+                    Critter.worldTimeStep();
+                }
+                catch (InvalidCritterException e){
+                    System.out.println("NAH");
+                }
+                paintGridLines(world);
+            });
 
-			rSide.add(stepGrid,0,3);
+			rSide.add(stepGrid,0,4);
 			rSide.add(makeN,0,2);
 			rSide.add(makeButton,1,2);
 			rSide.add(CritSelect,0,1);
@@ -115,9 +156,24 @@ public class Main extends Application {
 		for (int r = 0; r < Params.world_height; r++)
 			for (int c = 0; c < Params.world_width; c++) {
 				Shape s = new Rectangle(size, size);
-				s.setFill(null);
-				s.setStroke(Color.GRAY);
-				grid.add(s, c, r);
+                s.setFill(null);
+                s.setStroke(Color.GRAY);
+                if (!Critter.firstTime) {
+                    List<Critter> cTile = Critter.world.get(r).get(c).crittersOnTile();
+                    if (cTile.size() > 0) {
+                        switch (cTile.get(0).viewShape()) {
+                            case CIRCLE:
+                                s = new Circle(size / 2);
+                                s.setFill(cTile.get(0).viewFillColor());
+                                break;
+                            case SQUARE:
+                                s = new Rectangle(size, size);
+                                s.setFill(cTile.get(0).viewFillColor());
+                                break;
+                        }
+                    }
+                }
+                grid.add(s,c,r);
 			}
 
 	}
