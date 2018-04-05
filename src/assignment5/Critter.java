@@ -408,7 +408,7 @@ public abstract class Critter {
 	 * Prints out how many Critters of each type there are on the board.
 	 * @param critters List of Critters.
 	 */
-	public static void runStats(List<Critter> critters) {
+	public static String runStats(List<Critter> critters) {
 		System.out.print("" + critters.size() + " critters as follows -- ");	//prints size and preface
 		java.util.Map<String, Integer> critter_count = new java.util.HashMap<String, Integer>();	//Map holding the different amounts of Critters
 		for (Critter crit : critters) {						//for each critter...
@@ -426,6 +426,7 @@ public abstract class Critter {
 			prefix = ", ";
 		}
 		System.out.println();
+		return (" ");
 	}
 
 	/* the TestCritter class allows some critters to "cheat". If you want to
@@ -593,7 +594,8 @@ public abstract class Critter {
 	 */
 	public static void displayWorld() {
 		if (firstTime) {												//if this is the first worldTimeStep create world
-			createWorld();
+			createWorld(world);
+			createWorld(lastTurnWorld);
 			firstTime = false;
 		}
 		System.out.print('+');												//Prints frame

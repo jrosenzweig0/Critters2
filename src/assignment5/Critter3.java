@@ -30,7 +30,9 @@ public class Critter3 extends Critter.TestCritter {
 	public javafx.scene.paint.Color viewOutlineColor() { return viewColor(); }
 	public javafx.scene.paint.Color viewFillColor() { return viewColor(); }
 
-	public CritterShape viewShape(){ }
+	public CritterShape viewShape(){
+		return CritterShape.CIRCLE;
+	}
 	 
 	@Override
 	/**
@@ -64,12 +66,7 @@ public class Critter3 extends Critter.TestCritter {
 	 * @return returns a boolean for if it will fight or try and run
 	 */
 	public boolean fight(String opponent) {
-		if(hasmoved) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return true;
 	}
 
 	@Override
@@ -88,15 +85,14 @@ public class Critter3 extends Critter.TestCritter {
 	 * It prints the number of critters that can reproduce and the number of critters that are impotent
 	 * @param My1s is the list of critter4s in the population list
 	 */
-	public static void runStats(java.util.List<Critter> My1s) {
+	public static String runStats(java.util.List<Critter> My1s) {
 		int total=0;
 		for (int i=0; i<My1s.size(); i++){
 			if(My1s.get(i).toString() == "B")
 				total += 1;
 		}
 		int total1 = My1s.size() - total;
-		System.out.print("" + My1s.size() + " total Critter3s    ");
-		System.out.println(" with " + total + " B's and " + total1 + " b's");
+		return("" + My1s.size() + " total Critter3s with " + total + " B's and " + total1 + " b's");
 	}
 
 }

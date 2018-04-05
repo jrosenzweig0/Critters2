@@ -26,7 +26,9 @@ public class Critter1 extends Critter.TestCritter{
 	public javafx.scene.paint.Color viewOutlineColor() { return viewColor(); }
 	public javafx.scene.paint.Color viewFillColor() { return viewColor(); }
 
-	public CritterShape viewShape(){ }
+	public CritterShape viewShape(){
+		return CritterShape.CIRCLE;
+	}
 
 	/**
 	 * gets the distance to another Critter using the distance formula
@@ -124,13 +126,12 @@ public class Critter1 extends Critter.TestCritter{
 	 * Function which prints stats about Critter1s
 	 * @param ones List of Critters of type Critter1
 	 */
-	public static void runStats(List<Critter> ones) {
+	public static String runStats(List<Critter> ones) {
 		int total=0;									//total energy amassed by all Critter1s
 		for (int i=0; i<ones.size(); i++){
 			total+=ones.get(i).getEnergy();
 		}
-		System.out.print("" + ones.size() + " total Critter1s    ");		//print size and average energy
-		System.out.println(" with an average of " + total/(ones.size()) + "  energy");
+		return("" + ones.size() + " total Critter1s, with an average of " + total/(ones.size()) + "  energy");
 	}
 
 	/**

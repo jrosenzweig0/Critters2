@@ -22,7 +22,9 @@ public class Critter2 extends Critter.TestCritter {
 	public javafx.scene.paint.Color viewOutlineColor() { return viewColor(); }
 	public javafx.scene.paint.Color viewFillColor() { return viewColor(); }
 
-	public CritterShape viewShape(){ }
+	public CritterShape viewShape(){
+		return CritterShape.CIRCLE;
+	}
 
 	/**
 	 * construct sets fought to 0
@@ -79,14 +81,13 @@ public class Critter2 extends Critter.TestCritter {
 	 * Function returns stats of Critter2s
 	 * @param sixes List of all Critter2s
 	 */
-	public static void runStats(List<Critter> sixes) {
+	public static String runStats(List<Critter> sixes) {
 		int g100 = 0;				//number of Critter2s with > 100 energy
 		int l30 = 0;				//number of Critter2s with < 30 energy
 		for (int i=0; i<sixes.size(); i++){				//go through list and increment g100 and l30 accordingly
 			if (sixes.get(i).getEnergy()>=100) g100++;
 			if (sixes.get(i).getEnergy()<30) l30++;
 		}
-		System.out.print("" + sixes.size() + " total Critter2s    ");		//print size and number of thriving and failing Critter2s
-		System.out.println("" + g100 + " thriving, and " + l30 + " on death's door");
+		return("" + sixes.size() + " total Critter2s "+ g100 + " thriving, and " + l30 + " on death's door");
 	}
 }
