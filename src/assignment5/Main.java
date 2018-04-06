@@ -51,7 +51,21 @@ public class Main extends Application {
             GridPane rSide = new GridPane();
             rSide.setPadding(new Insets(10,10,10,10));
             rSide.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(10))));
+            GridPane botHalf = new GridPane();
+            botHalf.setPadding(new Insets(10,10,10,10));
+            botHalf.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(10))));
             GridPane bottom = new GridPane();
+            bottom.add(botHalf,0,0);
+            GridPane bottomRight = new GridPane();
+            Text title = new Text("CritterSim 2.0");
+            title.setFont(Font.font ("Harlow solid italic", 60));
+            title.setFill(Color.SKYBLUE);
+            Text authors = new Text("Johnathon Rosenzweig & Zach Sisti");
+            authors.setFont(Font.font ("Lucida Calligraphy", 16));
+            authors.setFill(Color.DARKGRAY);
+            bottomRight.add(title, 0, 0);
+            bottomRight.add(authors, 0, 1);
+            s.add(bottomRight,1,1);
 
             ObservableList<String> Crits = FXCollections.observableArrayList("Critter1","Critter2","Critter3",
                     "Critter4", "Algae", "TragicCritter", "Craig", "AlgaephobicCritter");
@@ -74,12 +88,23 @@ public class Main extends Application {
                 stats(CritSelect, statsOut);
             });
 
+            Button clear = new Button("Restart World");
+            clear.setOnAction(event -> {
+                Critter.clearWorld();
+                paintGridLines(world);
+                stats(CritSelect, statsOut);
+            });
+            bottom.add(clear, 1, 0);
+            bottom.setHgap(50);
+
             GridPane animationStuff = new GridPane();
             Button animateB = new Button("Animate");
             Button stopAnimate = new Button("Stop");
             stopAnimate.setDisable(true);
             stopAnimate.setOnAction(event -> {animateFlag = false;});
-            bottom.add(stopAnimate, 2, 0);
+            botHalf.add(new Text("Speed:"),1,0);
+            botHalf.add(stopAnimate, 2, 1);
+            botHalf.add(animationStuff,1,1);
 
             Slider animateS = new Slider();
             animateS.setMin(1);
@@ -93,7 +118,6 @@ public class Main extends Application {
             animationStuff.add(animateB,1,0);
             animationStuff.setPadding(new Insets(10,10,10,10));
             animationStuff.setHgap(20);
-            bottom.add(animationStuff,0,0);
             s.add(bottom,0,1);
 
 
@@ -101,7 +125,6 @@ public class Main extends Application {
             animateB.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    statsOut.clear();
                     animateFlag = !animateFlag;
                     if(!animateFlag){
                         return;
@@ -109,9 +132,10 @@ public class Main extends Application {
 
                     stopAnimate.setDisable(false);
                     animateB.setDisable(true);
+                    double animationTime = (500/animateS.getValue());
 
 
-                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis((int) 1000/animateS.getValue()),
+                    timeline.getKeyFrames().add(new KeyFrame(Duration.millis(animationTime),
                             new EventHandler<ActionEvent>() {
 
                                 @Override
@@ -128,6 +152,7 @@ public class Main extends Application {
                                         e.printStackTrace();
                                     }
                                     paintGridLines(world);
+                                    stats(CritSelect, statsOut);
                                 }
 
                             }));
@@ -137,7 +162,6 @@ public class Main extends Application {
 
                 }
             });
-
 
             Button setSeed = new Button("Set");
             setSeed.setOnAction(event -> {
@@ -229,19 +253,18 @@ public class Main extends Application {
             });
 
 
-            rSide.add(pickCritter,0,0);
-            rSide.add(CritSelect,0,1);
-            rSide.add(makeTitle, 0, 2);
-            rSide.add(makeN,0,3);
-            rSide.add(makeButton,1,3);
-            rSide.add(step, 0, 4);
-            rSide.add(stepGrid,0,5);
-            rSide.add(seedText,0,6);
-            rSide.add(seed, 0,7);
-            rSide.add(setSeed,1,7);
-            rSide.add(statsTitle, 0,8);
-            rSide.add(statsOut,0,9);
-
+            rSide.add(pickCritter,0,1);
+            rSide.add(CritSelect,0,2);
+            rSide.add(makeTitle, 0, 3);
+            rSide.add(makeN,0,4);
+            rSide.add(makeButton,1,4);
+            rSide.add(step, 0, 5);
+            rSide.add(stepGrid,0,6);
+            rSide.add(seedText,0,7);
+            rSide.add(seed, 0,8);
+            rSide.add(setSeed,1,8);
+            rSide.add(statsTitle, 0,9);
+            rSide.add(statsOut,0,10);
 
 
 

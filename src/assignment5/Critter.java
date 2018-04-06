@@ -515,6 +515,7 @@ public abstract class Critter {
 				world.get(i).get(j).clearTile();		//for every Tile clear tile list
 			}
 		}
+		population.clear();
 	}
 
     /**
