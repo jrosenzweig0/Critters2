@@ -130,7 +130,7 @@ public class Critter1 extends Critter.TestCritter{
 		for (int i=0; i<ones.size(); i++){
 			total+=ones.get(i).getEnergy();
 		}
-		return("" + ones.size() + " total Critter1s, with an average of " + total/(ones.size()) + "  energy");
+		return("" + ones.size() + " total Critter1s, with an average of " + total/(ones.size()) + " energy");
 	}
 
 	/**

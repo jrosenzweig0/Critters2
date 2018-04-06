@@ -40,7 +40,7 @@ public abstract class Critter {
     private static Map<Integer, Map<Integer, Tile>> lastTurnWorld = new HashMap<Integer, Map<Integer, Tile>>(); 		//copy of world as it was before this worldTimeStep started
     public static boolean firstTime = true;					//lets program know to call createWorld()
 	private boolean hasMoved;									//says if Critter has moved thus far this turn
-	private static HashSet<String> critterTypes = new HashSet<String>() {{add("assignment5.Craig"); add("assignment5.Algae");
+	public static HashSet<String> critterTypes = new HashSet<String>() {{add("assignment5.Craig"); add("assignment5.Algae");
 		add("assignment5.Critter1"); add("assignment5.Critter2"); add("assignment5.Critter3");add("assignment5.Critter4");
 		add("assignment5.AlgaephobicCritter");add("assignment5.TragicCritter");}};	//holds critterTypes
 	static {				// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
