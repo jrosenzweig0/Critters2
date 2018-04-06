@@ -30,7 +30,7 @@ public class Critter4 extends Critter.TestCritter {
 
 	}
 
-	public javafx.scene.paint.Color viewOutlineColor() { return viewColor(); }
+	public javafx.scene.paint.Color viewOutlineColor() { return javafx.scene.paint.Color.ROSYBROWN; }
 	public javafx.scene.paint.Color viewFillColor() { return Color.MAROON;  }
 
 	public CritterShape viewShape(){

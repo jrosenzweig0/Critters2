@@ -30,11 +30,11 @@ public class Critter3 extends Critter.TestCritter {
 		direction = getRandomInt(8);
 	}
 
-	public javafx.scene.paint.Color viewOutlineColor() { return viewColor(); }
-	public javafx.scene.paint.Color viewFillColor() { return Color.DARKSALMON; }
+	public javafx.scene.paint.Color viewOutlineColor() { return javafx.scene.paint.Color.BLUEVIOLET; }
+	public javafx.scene.paint.Color viewFillColor() { return javafx.scene.paint.Color.DARKMAGENTA; }
 
 	public CritterShape viewShape(){
-		return CritterShape.CIRCLE;
+		return CritterShape.SQUARE;
 	}
 	 
 	@Override
@@ -69,6 +69,7 @@ public class Critter3 extends Critter.TestCritter {
 	 * @return returns a boolean for if it will fight or try and run
 	 */
 	public boolean fight(String opponent) {
+		look(getRandomInt(8), false);
 		return true;
 	}
 

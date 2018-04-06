@@ -19,7 +19,7 @@ import java.util.List;
 
 public class Critter2 extends Critter.TestCritter {
 
-	public javafx.scene.paint.Color viewOutlineColor() { return viewColor(); }
+	public javafx.scene.paint.Color viewOutlineColor() { return javafx.scene.paint.Color.BLACK; }
 	public javafx.scene.paint.Color viewFillColor() { return javafx.scene.paint.Color.CRIMSON;  }
 
 	public CritterShape viewShape(){
@@ -50,6 +50,9 @@ public class Critter2 extends Critter.TestCritter {
 		if (getEnergy()>=60){				//only reproduce if energy is above threshold (120)
 			Critter2 child = new Critter2();
 			reproduce(child, getRandomInt(8));
+		}
+		if (getEnergy()>100){
+			look(getRandomInt(8), true);
 		}
 	}
 

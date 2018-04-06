@@ -44,9 +44,7 @@ public class Main extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
 
-            paintGridLines(world);
-
-
+            Critter.displayWorld(world);
 
             GridPane rSide = new GridPane();
             rSide.setPadding(new Insets(10,10,10,10));
@@ -85,17 +83,115 @@ public class Main extends Application {
             statsOut.setPrefWidth(10);
             statsOut.setPrefHeight(100);
             CritSelect.setOnAction(event -> {
-                stats(CritSelect, statsOut);
+                try {
+                    List<Critter> crits = Critter.getInstances("assignment5." + CritSelect.getValue());
+                    if (crits.size()>0) {
+                        stats(CritSelect, statsOut);
+                    }
+                }
+                catch (InvalidCritterException e){
+                    System.out.println("NAH");
+                }
             });
 
             Button clear = new Button("Restart World");
             clear.setOnAction(event -> {
                 Critter.clearWorld();
-                paintGridLines(world);
+                Critter.displayWorld(world);
                 stats(CritSelect, statsOut);
             });
             bottom.add(clear, 1, 0);
             bottom.setHgap(50);
+
+
+            Button setSeed = new Button("Set");
+            setSeed.setOnAction(event -> {
+                Critter.setSeed(Integer.parseInt(seed.getText()));
+            });
+
+            Text makeTitle = new Text("Make:");
+            makeTitle.setFont(Font.font ("Verdana", 20));
+
+
+            //Make
+            Button makeButton = new Button("MAKE");
+            Slider makeN = new Slider();
+            makeN.setMin(1);
+            makeN.setMax(500);
+            makeN.setValue(0);
+            makeN.setShowTickLabels(true);
+            makeN.setShowTickMarks(true);
+            makeN.setMajorTickUnit(100);
+            makeN.setMinorTickCount(10);
+            makeN.setBlockIncrement(5);
+            makeN.setPrefWidth(200);
+            makeButton.setOnAction(event -> {
+                int numCrit = (int)makeN.getValue();
+                for (int i = 0; i < numCrit; i++) {
+                    try{
+                        Critter.makeCritter("assignment5." + CritSelect.getValue());
+                    }
+                    catch (InvalidCritterException e){
+                        System.out.println("NAH");
+                    }
+                }
+                stats(CritSelect, statsOut);
+                Critter.displayWorld(world);
+            });
+
+
+
+            //Step
+            GridPane stepGrid = new GridPane();
+            Button step1 = new Button("1");
+            Button step100 = new Button("100");
+            Button step1000 = new Button("1000");
+            Text step = new Text("Step:");
+            step.setFont(Font.font ("Verdana", 20));
+            stepGrid.add(step1,0,0);
+            stepGrid.add(step100,1,0);
+            stepGrid.add(step1000,2,0);
+            stepGrid.setHgap(20);
+
+            //Step 1
+            step1.setOnAction(event -> {
+                try{
+                    Critter.worldTimeStep();
+                }
+                catch (InvalidCritterException e){
+                    System.out.println("NAH");
+                }
+                stats(CritSelect, statsOut);
+                Critter.displayWorld(world);
+            });
+
+            //Step 100
+            step100.setOnAction(event -> {
+                for(int i = 0; i<100; i++) {
+                    try{
+                        Critter.worldTimeStep();
+                    }
+                    catch (InvalidCritterException e){
+                        System.out.println("NAH");
+                    }
+                }
+                stats(CritSelect, statsOut);
+                Critter.displayWorld(world);
+            });
+
+            //Step 1000
+            step1000.setOnAction(event -> {
+                for(int i = 0; i<1000; i++) {
+                    try{
+                        Critter.worldTimeStep();
+                    }
+                    catch (InvalidCritterException e){
+                        System.out.println("NAH");
+                    }
+                }
+                stats(CritSelect, statsOut);
+                Critter.displayWorld(world);
+            });
 
             GridPane animationStuff = new GridPane();
             Button animateB = new Button("Animate");
@@ -132,6 +228,16 @@ public class Main extends Application {
 
                     stopAnimate.setDisable(false);
                     animateB.setDisable(true);
+                    step1.setDisable(true);
+                    step100.setDisable(true);
+                    step1000.setDisable(true);
+                    makeButton.setDisable(true);
+                    clear.setDisable(true);
+                    setSeed.setDisable(true);
+                    seed.setDisable(true);
+                    makeN.setDisable(true);
+                    CritSelect.setDisable(true);
+                    animateS.setDisable(true);
                     double animationTime = (500/animateS.getValue());
 
 
@@ -143,6 +249,16 @@ public class Main extends Application {
                                     if(!animateFlag){
                                         stopAnimate.setDisable(true);
                                         animateB.setDisable(false);
+                                        step1.setDisable(false);
+                                        step100.setDisable(false);
+                                        step1000.setDisable(false);
+                                        makeButton.setDisable(false);
+                                        clear.setDisable(false);
+                                        setSeed.setDisable(false);
+                                        seed.setDisable(false);
+                                        makeN.setDisable(false);
+                                        CritSelect.setDisable(false);
+                                        animateS.setDisable(false);
                                         stats(CritSelect, statsOut);
                                         return;
                                     }
@@ -151,7 +267,7 @@ public class Main extends Application {
                                     } catch (InvalidCritterException e) {
                                         e.printStackTrace();
                                     }
-                                    paintGridLines(world);
+                                    Critter.displayWorld(world);
                                     stats(CritSelect, statsOut);
                                 }
 
@@ -163,94 +279,6 @@ public class Main extends Application {
                 }
             });
 
-            Button setSeed = new Button("Set");
-            setSeed.setOnAction(event -> {
-                Critter.setSeed(Integer.parseInt(seed.getText()));
-            });
-
-            Text makeTitle = new Text("Make:");
-            makeTitle.setFont(Font.font ("Verdana", 20));
-
-
-            //Make
-            Button makeButton = new Button("MAKE");
-            Slider makeN = new Slider();
-            makeN.setMin(0);
-            makeN.setMax(500);
-            makeN.setValue(0);
-            makeN.setShowTickLabels(true);
-            makeN.setShowTickMarks(true);
-            makeN.setMajorTickUnit(100);
-            makeN.setMinorTickCount(10);
-            makeN.setBlockIncrement(5);
-            makeN.setPrefWidth(200);
-            makeButton.setOnAction(event -> {
-                int numCrit = (int)makeN.getValue();
-                for (int i = 0; i < numCrit; i++) {
-                    try{
-                        Critter.makeCritter("assignment5." + CritSelect.getValue());
-                    }
-                    catch (InvalidCritterException e){
-                        System.out.println("NAH");
-                    }
-                }
-                stats(CritSelect, statsOut);
-                paintGridLines(world);
-            });
-
-
-
-            //Step
-            GridPane stepGrid = new GridPane();
-            Button step1 = new Button("1");
-            Button step100 = new Button("100");
-            Button step1000 = new Button("1000");
-            Text step = new Text("Step:");
-            step.setFont(Font.font ("Verdana", 20));
-            stepGrid.add(step1,0,0);
-            stepGrid.add(step100,1,0);
-            stepGrid.add(step1000,2,0);
-            stepGrid.setHgap(20);
-
-            //Step 1
-            step1.setOnAction(event -> {
-                try{
-                    Critter.worldTimeStep();
-                }
-                catch (InvalidCritterException e){
-                    System.out.println("NAH");
-                }
-                stats(CritSelect, statsOut);
-                paintGridLines(world);
-            });
-
-            //Step 100
-            step100.setOnAction(event -> {
-                for(int i = 0; i<100; i++) {
-                    try{
-                        Critter.worldTimeStep();
-                    }
-                    catch (InvalidCritterException e){
-                        System.out.println("NAH");
-                    }
-                }
-                stats(CritSelect, statsOut);
-                paintGridLines(world);
-            });
-
-            //Step 1000
-            step1000.setOnAction(event -> {
-                for(int i = 0; i<1000; i++) {
-                    try{
-                        Critter.worldTimeStep();
-                    }
-                    catch (InvalidCritterException e){
-                        System.out.println("NAH");
-                    }
-                }
-                stats(CritSelect, statsOut);
-                paintGridLines(world);
-            });
 
 
             rSide.add(pickCritter,0,1);
@@ -312,38 +340,4 @@ public class Main extends Application {
 
     }
 
-    /*
-     * Paint the grid lines in something not yellow.  The purpose is two-fold -- to indicate boundaries of
-     * icons, and as place-holders for empty cells.  Without placeholders, grid may not display properly.
-     */
-    private static void paintGridLines(GridPane grid) {
-        int size = 600/Params.world_height;
-//		grid.getColumnConstraints().add(new ColumnConstraints(size));
-//		grid.getRowConstraints().add(new RowConstraints(size));
-        grid.getChildren().clear();
-        grid.setGridLinesVisible(true);
-        for (int r = 0; r < Params.world_height; r++)
-            for (int c = 0; c < Params.world_width; c++) {
-                Shape s = new Rectangle(size, size);
-                s.setFill(null);
-                s.setStroke(Color.WHITE);
-                if (!Critter.firstTime) {
-                    List<Critter> cTile = Critter.world.get(r).get(c).crittersOnTile();
-                    if (cTile.size() > 0) {
-                        switch (cTile.get(0).viewShape()) {
-                            case CIRCLE:
-                                s = new Circle(size / 2);
-                                s.setFill(cTile.get(0).viewFillColor());
-                                break;
-                            case SQUARE:
-                                s = new Rectangle(size, size);
-                                s.setFill(cTile.get(0).viewFillColor());
-                                break;
-                        }
-                    }
-                }
-                grid.add(s,c,r);
-            }
-
     }
-}

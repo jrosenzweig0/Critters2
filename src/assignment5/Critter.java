@@ -1,5 +1,11 @@
 package assignment5;
 
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+
 import java.lang.reflect.Constructor;
 import java.util.*;
 
@@ -86,6 +92,13 @@ public abstract class Critter {
                 Location[0] += distance;
                 break;
         }
+		Location[0] = Location[0] % Params.world_width;		//if x exceeds world_width, however much it exceeds by is new x value
+		Location[1] = Location[1] % Params.world_height;		//if y exceeds world_width, however much it exceeds by is new y value
+		if(Location[0] < 0)									//if x is negative new x is x + world_width
+			Location[0] = Location[0] + Params.world_width;
+		if(Location[1] < 0)									//if y is negative new y is y + world_width
+			Location[1] = Location[1] + Params.world_height;
+
         this.energy -= Params.look_energy_cost;
         ArrayList<Critter> lookList = lastTurnWorld.get(Location[1]).get(Location[0]).crittersOnTile(); //get the list of Critters on Tile according to lastTurnWorld
         if (lookList.size()>0){
@@ -593,26 +606,35 @@ public abstract class Critter {
 	/**
 	 * Displays 2D representation of world with ASCII characters
 	 */
-	public static void displayWorld() {
-		if (firstTime) {												//if this is the first worldTimeStep create world
-			createWorld(world);
-			createWorld(lastTurnWorld);
-			firstTime = false;
-		}
-		System.out.print('+');												//Prints frame
-		for(int i=0; i<Params.world_width; i++){System.out.print('-');}
-		System.out.println('+');
-		for(int i=0; i<Params.world_height; i++){							//For every row...
-			System.out.print('|');											//Prints edge
-			for(int j=0; j<Params.world_width; j++){						//Prints either space or critter symbol for every entry of row
-				if ((world.get(i).get(j) != null) && ((world.get(i).get(j)).crittersOnTile().size()>0))
-					System.out.print((world.get(i).get(j)).crittersOnTile().get(0).toString());
-				else System.out.print(' ');
+	public static void displayWorld(Object world) {
+		GridPane grid =(GridPane)world;
+		int size = 600/Params.world_height;
+		grid.getChildren().clear();
+		grid.setGridLinesVisible(true);
+		for (int r = 0; r < Params.world_height; r++)
+			for (int c = 0; c < Params.world_width; c++) {
+				Shape s = new Rectangle(size, size);
+				s.setFill(null);
+				s.setStroke(Color.WHITE);
+				if (!Critter.firstTime) {
+					List<Critter> cTile = Critter.world.get(r).get(c).crittersOnTile();
+					if (cTile.size() > 0) {
+						switch (cTile.get(0).viewShape()) {
+							case CIRCLE:
+								s = new Circle(size / 2);
+								s.setFill(cTile.get(0).viewFillColor());
+								s.setStroke(cTile.get(0).viewOutlineColor());
+								break;
+							case SQUARE:
+								s = new Rectangle(size, size);
+								s.setFill(cTile.get(0).viewFillColor());
+								s.setStroke(cTile.get(0).viewOutlineColor());
+								break;
+						}
+					}
+				}
+				grid.add(s,c,r);
 			}
-			System.out.println('|');										//Prints edge
-		}
-		System.out.print('+');												//Prints frame
-		for(int i=0; i<Params.world_width; i++){System.out.print('-');}
-		System.out.println('+');
+
 	}
 }
